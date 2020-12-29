@@ -184,6 +184,11 @@ pub fn (conn &Connection) request(subj string, data string, timeout int) (Status
 }
 
 [inline]
+pub fn (conn &Connection) str() string {
+    return "vnats.Connection"
+}
+
+[inline]
 pub fn (conn &Connection) sub(subj string, cb MessageCallback, user_data voidptr) {
 	sub := &C.natsSubscription(voidptr(0))
 	C.natsConnection_Subscribe(&sub, conn, subj.str, cb, user_data)
