@@ -4,8 +4,8 @@ module vnats
 #flag -lnats
 
 type Connection = C.natsConnection
-type Options = &C.natsOptions
-type Msg = &C.natsMsg
+type Options = C.natsOptions
+type Msg = C.natsMsg
 type Subscription = C.natsSubscription
 type MessageCallback = fn (conn &Connection, sub &C.natsSubscription, msg &Msg, user_data voidptr)
 
@@ -110,24 +110,24 @@ enum Status {
     invalid_queue_name = C.NATS_INVALID_QUEUE_NAME            ///< An invalid queue name was passed when creating a queue subscription.
 }
 
-fn C.natsOptions_Create() Status
-fn C.natsOptions_SetURL()
-fn C.natsOptions_SetPingInterval()
-fn C.natsOptions_SetMaxPingsOut()
-fn C.natsOptions_SetAllowReconnect()
+fn C.natsOptions_Create(&&Options) Status
+fn C.natsOptions_SetURL(&Options, &byte)
+fn C.natsOptions_SetPingInterval(&Options, int)
+fn C.natsOptions_SetMaxPingsOut(&Options, int)
+fn C.natsOptions_SetAllowReconnect(&Options, bool)
 fn C.natsOptions_SetDisconnectedCB()
 fn C.natsOptions_SetReconnectedCB()
 fn C.natsOptions_SetDiscoveredServersCB()
-fn C.natsConnection_Connect() Status
-fn C.natsConnection_Publish() Status
-fn C.natsConnection_PublishString() Status
-fn C.natsMsg_GetSubject(msg) charptr
-fn C.natsMsg_GetData(msg) charptr
-fn C.natsMsg_GetReply(msg) charptr
-fn C.natsMsg_Destroy(msg)
-fn C.natsConnection_Subscribe()
-fn C.natsConnection_QueueSubscribe()
-fn C.natsConnection_Request() Status
+fn C.natsConnection_Connect(&Connection, &Options) Status
+fn C.natsConnection_Publish(&Connection, &byte, &byte, int) Status
+fn C.natsConnection_PublishString(&Connection, &byte, &byte) Status
+fn C.natsMsg_GetSubject(&Msg) charptr
+fn C.natsMsg_GetData(&Msg) charptr
+fn C.natsMsg_GetReply(&Msg) charptr
+fn C.natsMsg_Destroy(&Msg)
+fn C.natsConnection_Subscribe(&&Subscription, &Connection, &byte, voidptr, voidptr)
+fn C.natsConnection_QueueSubscribe(&Subscription, &Connection, &byte, &byte, voidptr, voidptr)
+fn C.natsConnection_Request(&&Msg, &Connection, byte, byte, int, int) Status
 
 pub fn connect(url string) (Status, &Connection) {
 	client := Client{
@@ -147,7 +147,7 @@ pub fn connect(url string) (Status, &Connection) {
 	// C.natsOptions_SetDisconnectedCB(client.opts, disconnectedCB, NULL);
 	// C.natsOptions_SetReconnectedCB(client.opts, reconnectedCB, NULL);
 	// C.natsOptions_SetDiscoveredServersCB(client->opts, discoveredServersCB, NULL);
-	status = C.natsConnection_Connect(&client.conn, client.opts)
+	status = C.natsConnection_Connect(client.conn, client.opts)
 	if status != .ok {
 		println("failed")
 		return status, &Connection(voidptr(0))
@@ -197,7 +197,7 @@ pub fn (conn &Connection) sub(subj string, cb MessageCallback, user_data voidptr
 [inline]
 pub fn (conn &Connection) qsub(subj string, queue string, cb MessageCallback, user_data voidptr) {
 	sub := &C.natsSubscription(voidptr(0))
-	C.natsConnection_QueueSubscribe(&sub, conn, subj.str, queue.str, cb, user_data)
+	C.natsConnection_QueueSubscribe(sub, conn, subj.str, queue.str, cb, user_data)
 }
 
 pub fn (msg &Msg) get_subject() string {

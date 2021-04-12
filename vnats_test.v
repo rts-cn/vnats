@@ -20,5 +20,5 @@ fn test_conn() {
 		conn.publish_string("cn.ok", "ok")
 	}
 
-	time.sleep_ms(1000)
+	time.sleep(1000 * time.millisecond)
 }
