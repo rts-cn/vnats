@@ -6,3 +6,6 @@ c:
 
 test:
 	v test .
+
+ctest:
+	gcc -o a -lnats a.c
