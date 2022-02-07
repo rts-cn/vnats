@@ -16,7 +16,7 @@ fn test_conn() {
 
 	if status == .ok {
 		println("connected")
-		conn.qsub(">", "q", on_nats_message, "")
+		conn.qsub(">", "q", on_nats_message, voidptr(0))
 		conn.publish_string("cn.ok", "ok")
 	}
 
