@@ -118,7 +118,7 @@ fn C.natsOptions_SetAllowReconnect(&Options, bool)
 fn C.natsOptions_SetDisconnectedCB()
 fn C.natsOptions_SetReconnectedCB()
 fn C.natsOptions_SetDiscoveredServersCB()
-fn C.natsConnection_Connect(&Connection, &Options) Status
+fn C.natsConnection_Connect(&&Connection, &Options) Status
 fn C.natsConnection_Publish(&Connection, &byte, &byte, int) Status
 fn C.natsConnection_PublishString(&Connection, &byte, &byte) Status
 fn C.natsMsg_GetSubject(&Msg) charptr
@@ -126,7 +126,7 @@ fn C.natsMsg_GetData(&Msg) charptr
 fn C.natsMsg_GetReply(&Msg) charptr
 fn C.natsMsg_Destroy(&Msg)
 fn C.natsConnection_Subscribe(&&Subscription, &Connection, &byte, voidptr, voidptr)
-fn C.natsConnection_QueueSubscribe(&Subscription, &Connection, &byte, &byte, MessageCallback, voidptr)
+fn C.natsConnection_QueueSubscribe(&&Subscription, &Connection, &byte, &byte, MessageCallback, voidptr)
 fn C.natsConnection_Request(&&Msg, &Connection, byte, byte, int, int) Status
 
 pub fn connect(url string) (Status, &Connection) {
@@ -147,15 +147,15 @@ pub fn connect(url string) (Status, &Connection) {
 	// C.natsOptions_SetDisconnectedCB(client.opts, disconnectedCB, NULL);
 	// C.natsOptions_SetReconnectedCB(client.opts, reconnectedCB, NULL);
 	// C.natsOptions_SetDiscoveredServersCB(client->opts, discoveredServersCB, NULL);
-	status = C.natsConnection_Connect(client.conn, client.opts)
+	status = C.natsConnection_Connect(&client.conn, client.opts)
 	if status != .ok {
 		println("failed")
 		return status, &Connection(voidptr(0))
 	}
 
-	subj := "cn.xswitch.blah"
-	data := "blah"
-	C.natsConnection_Publish(client.conn, subj.str, data.str, data.len)
+	// subj := "cn.xswitch.blah"
+	// data := "blah"
+	// C.natsConnection_Publish(client.conn, subj.str, data.str, data.len)
 
 	return Status.ok, client.conn
 }
@@ -197,7 +197,7 @@ pub fn (conn &Connection) sub(subj string, cb MessageCallback, user_data voidptr
 [inline]
 pub fn (conn &Connection) qsub(subj string, queue string, cb MessageCallback, user_data voidptr) {
 	sub := &C.natsSubscription(voidptr(0))
-	C.natsConnection_QueueSubscribe(sub, conn, subj.str, queue.str, cb, user_data)
+	C.natsConnection_QueueSubscribe(&sub, conn, subj.str, queue.str, cb, user_data)
 }
 
 pub fn (msg &Msg) get_subject() string {

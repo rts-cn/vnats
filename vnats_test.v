@@ -12,7 +12,9 @@ fn on_nats_message(conn &Connection, sub &C.natsSubscription, msg &Msg, user_dat
 
 
 fn test_conn() {
-	status, conn := connect("nats://localhost:4222")
+	url := "nats://localhost:4222"
+	print("connecting to $url\n")
+	status, conn := connect(url)
 
 	if status == .ok {
 		println("connected")
