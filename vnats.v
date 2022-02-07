@@ -33,7 +33,7 @@ struct C.natsSubscription {
 struct C.__natsSubscription {
 }
 
-enum Status {
+pub enum Status {
 	ok = C.NATS_OK
     err = C.NATS_ERR                           ///< Generic error
     protocol_error = C.NATS_PROTOCOL_ERROR                ///< Error when parsing a protocol message,
