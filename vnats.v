@@ -127,7 +127,7 @@ fn C.natsMsg_GetReply(&Msg) charptr
 fn C.natsMsg_Destroy(&Msg)
 fn C.natsConnection_Subscribe(&&Subscription, &Connection, &byte, voidptr, voidptr)
 fn C.natsConnection_QueueSubscribe(&&Subscription, &Connection, &byte, &byte, MessageCallback, voidptr)
-fn C.natsConnection_Request(&&Msg, &Connection, byte, byte, int, int) Status
+fn C.natsConnection_Request(&&Msg, &Connection, &byte, &byte, int, int) Status
 
 pub fn connect(url string) (Status, &Connection) {
 	client := Client{

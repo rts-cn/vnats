@@ -24,3 +24,15 @@ fn test_conn() {
 
 	time.sleep(1000 * time.millisecond)
 }
+
+fn test_request() {
+	url := "nats://localhost:4222"
+	print("connecting to $url\n")
+	status, conn := connect(url)
+
+	if status == .ok {
+		println("connected")
+		conn.qsub(">", "q", on_nats_message, voidptr(0))
+		conn.request("cn.test.request", "request", 1)
+	}
+}
