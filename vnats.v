@@ -196,13 +196,13 @@ pub fn (conn &Connection) str() string {
 
 [inline]
 pub fn (conn &Connection) sub(subj string, cb MessageCallback, user_data voidptr) {
-	sub := &C.natsSubscription(voidptr(0))
+	sub := &Subscription(voidptr(0))
 	C.natsConnection_Subscribe(&sub, conn, subj.str, cb, user_data)
 }
 
 [inline]
 pub fn (conn &Connection) qsub(subj string, queue string, cb MessageCallback, user_data voidptr) &Subscription{
-	sub := &C.natsSubscription(voidptr(0))
+	sub := &Subscription(voidptr(0))
 	C.natsConnection_QueueSubscribe(&sub, conn, subj.str, queue.str, cb, user_data)
 	return sub
 }
